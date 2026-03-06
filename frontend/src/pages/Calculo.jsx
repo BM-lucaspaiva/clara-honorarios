@@ -22,7 +22,18 @@ const [dados, setDados] = useState({
   balancete: "",
   reuniao: "",
 
-  variaveis: {}
+  variaveis: {
+    niboDocs:false,
+    niboGF:false,
+    omieSimples:false,
+    omiePresumido:false,
+    contaAzul:false,
+    nucont:false,
+    braga:false,
+    centroCustos:false,
+    crfBasico:false,
+    crfCompleto:false
+}
 
 })
 

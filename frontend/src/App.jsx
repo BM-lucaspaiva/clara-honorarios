@@ -1,9 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
+import Calculo from "./pages/Calculo"
 import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import Historico from "./pages/Historico"
-import Calculo from "./pages/Calculo"
+
 
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
