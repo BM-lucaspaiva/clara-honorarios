@@ -1,6 +1,6 @@
-export default function BaseCalculo({dados, setDados}) {
+export default function BaseCalculo({dados, setDados,resultado}) {
 
-const salario = dados.salarioMinimo
+const sM = dados.salarioMinimo || 0
 
 return (
 
@@ -11,8 +11,15 @@ return (
         </h2>
 
         <div className="mb-4">
-        Salário mínimo: <strong>R$ {salario}</strong>
+        Salário mínimo: <strong>R$ {sM}</strong>
         </div>
+        <div className="mt-3 text-sm text-gray-600">
+            Valor Base: {(resultado?.valorBase || 0).toLocaleString('pt-BR',
+                { style: 'currency', 
+                 currency: 'BRL'
+                  })}
+        </div>
+
         <div className="space-y-2">
 
             <label>
@@ -29,6 +36,14 @@ return (
                 onChange={()=>setDados({...dados, percentual:0.9})}
                 />
                 90%
+            </label>
+
+            <label>
+                <input type="radio"
+                checked={dados.percentual === 1.0}
+                onChange={()=>setDados({...dados, percentual:1.0})}
+                />
+                100%
             </label>
 
             <label>

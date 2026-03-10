@@ -1,4 +1,4 @@
-export default function ResumoHonorario({dados}){
+export default function ResumoHonorario({dados, resultado}){
 
 return(
 
@@ -9,22 +9,21 @@ return(
     </h2>
 
     <div className="text-4xl font-bold mb-6">
-        R$ 0,00
+        {(resultado?.honorarioTotal || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
     </div>
 
     <div className="text-sm space-y-2">
 
         <div>Regime: {dados.regime}</div>
+        <div>Segmento: {dados.segmento}</div>
         <div>Faturamento: {dados.faturamento}</div>
         <div>Funcionários: {dados.funcionarios}</div>
         <div>Filiais: {dados.filiais}</div>
+        <div>Balancete: {dados.balancete}</div>
+        <div>Reunião: {dados.reuniao}</div>
 
     </div>
-
-    <button className="bg-white text-blue-600 mt-6 w-full py-2 rounded">
-        Gerar Relatório
-    </button>
-
+    
 </div>
 
 )

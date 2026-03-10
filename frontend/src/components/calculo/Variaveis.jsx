@@ -13,7 +13,7 @@ return(
         onChange={(e)=>setDados({...dados, balancete:e.target.value})}
     >
 
-        <option>Balancete</option>
+        <option value="">Selecione a frequência</option>
         <option>Semestral</option>
         <option>Trimestral</option>
         <option>Bimestral</option>
@@ -27,7 +27,7 @@ return(
         onChange={(e)=>setDados({...dados, reuniao:e.target.value})}
     >
 
-        <option>Reunião</option>
+        <option value="">Selecione a frequência</option>
         <option>Semestral</option>
         <option>Trimestral</option>
         <option>Bimestral</option>

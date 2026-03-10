@@ -13,7 +13,7 @@ return(
         onChange={(e)=>setDados({...dados, regime:e.target.value})}
     >
 
-        <option>Selecione o regime</option>
+        <option value="">Selecione o regime</option>
         <option>Simples Nacional</option>
         <option>Lucro Presumido</option>
         <option>Lucro Real</option>
@@ -28,7 +28,7 @@ return(
         onChange={(e)=>setDados({...dados, segmento:e.target.value})}
     >
 
-        <option>Segmento</option>
+        <option value="">Segmento</option> 
         <option>Prestação de Serviços</option>
         <option>Comércio</option>
         <option>Indústria</option>
