@@ -1,29 +1,20 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import Calculo from "./pages/Calculo"
-import Login from "./pages/Login"
 import Dashboard from "./pages/Dashboard"
 import Historico from "./pages/Historico"
-
-
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Login from "./pages/Login"
+import "./App.css"
 
 function App() {
   return (
     <BrowserRouter>
-    
       <Routes>
-
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/historico" element={<Historico />} />
-        <Route path="/calculo" element={<Calculo />} />
-
+        <Route element={<Login />} path="/" />
+        <Route element={<Dashboard />} path="/dashboard" />
+        <Route element={<Historico />} path="/historico" />
+        <Route element={<Calculo />} path="/calculo" />
       </Routes>
-
     </BrowserRouter>
   )
 }
