@@ -4,6 +4,7 @@ import { formatCurrency } from "../../utils/calculo/helpers"
  * Retorna "---" para valores vazios e mantém o valor original quando preenchido.
  */
 const getDisplay = (value) => {
+  if (Array.isArray(value)) return value.length ? value.join(", ") : "---"
   if (value === null || value === undefined || value === "" || value === 0) return "---"
   return value
 }
@@ -50,7 +51,10 @@ export default function ResumoHonorario({ dados, resultado }) {
           </li>
           <li className="flex justify-between gap-4">
             <span className="text-slate-500">Segmento:</span>
-            <span className={`text-right font-medium ${getClass(segmentoTexto)}`}>{segmentoTexto}</span>
+            <span className={`text-right font-medium ${getClass(segmentoTexto)}`}>
+              {segmentoTexto}
+              {segmentoTexto !== "---" ? ` (${formatCurrency(resultado?.segmentoValor)})` : ""}
+            </span>
           </li>
           <li className="flex justify-between gap-4">
             <span className="text-slate-500">Faturamento:</span>
@@ -70,11 +74,15 @@ export default function ResumoHonorario({ dados, resultado }) {
           </li>
           <li className="flex justify-between gap-4">
             <span className="text-slate-500">Balancete:</span>
-            <span className={`text-right font-medium ${getClass(balanceteTexto)}`}>{balanceteTexto}</span>
+            <span className={`text-right font-medium ${getClass(balanceteTexto)}`}>{balanceteTexto}
+              {segmentoTexto !== "---" ? ` (${formatCurrency(resultado?.balanceteValor)})` : ""}
+            </span>
           </li>
           <li className="flex justify-between gap-4">
             <span className="text-slate-500">Reunião:</span>
-            <span className={`text-right font-medium ${getClass(reuniaoTexto)}`}>{reuniaoTexto}</span>
+            <span className={`text-right font-medium ${getClass(reuniaoTexto)}`}>{reuniaoTexto}
+              {segmentoTexto !== "---" ? ` (${formatCurrency(resultado?.reuniaoValor)})` : ""}
+            </span>
           </li>
           <li className="flex justify-between gap-4 border-t border-slate-200 pt-2">
             <span className="text-slate-500">Variáveis:</span>

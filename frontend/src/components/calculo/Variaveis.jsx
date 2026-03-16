@@ -1,7 +1,7 @@
 const INTEGRACOES = [
   { key: "niboDocs", label: "Nibo (Docs + CC)" },
   { key: "niboGF", label: "Nibo (GF Plus)" },
-  { key: "hubcont", label: "Hubcont" },
+  { key: "hubcount", label: "Hubcont" },
   { key: "bragaOnline", label: "Braga Online" },
   { key: "centroCustos", label: "Centro de Custos" },
   { key: "crfBasico", label: "CRF Básico" },

@@ -1,6 +1,40 @@
-import { formatLocalizedNumber, parseLocalizedNumber } from "../../utils/calculo/helpers"
+import {
+  clamp,
+  formatCurrency,
+  formatLocalizedNumber,
+  parseIntegerInput,
+  parseLocalizedNumber,
+} from "../../utils/calculo/helpers"
 
-export default function DadosCliente({ dados, setDados }) {
+const SEGMENTOS = [
+  "Prestação de Serviços",
+  "Comércio",
+  "Indústria",
+  "Construção Civil",
+  "Holding",
+]
+
+const PERCENTUAL_MIN = 0.10
+const PERCENTUAL_MAX = 0.50
+const PORC_FILIAIS_MIN = 10
+const PORC_FILIAIS_MAX = 50
+
+export default function DadosCliente({ dados, setDados, resultado }) {
+
+  const segmentosSelecionados = Array.isArray(dados.segmento)
+    ? dados.segmento
+    : dados.segmento
+      ? [dados.segmento]
+      : []
+
+  const toggleSegmento = (segmento) => {
+    const atualizado = segmentosSelecionados.includes(segmento)
+      ? segmentosSelecionados.filter((item) => item !== segmento)
+      : [...segmentosSelecionados, segmento]
+
+    setDados({ ...dados, segmento: atualizado })
+  }
+
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4">
@@ -25,19 +59,33 @@ export default function DadosCliente({ dados, setDados }) {
         </div>
 
         <div className="md:col-span-2">
-          <label className="mb-2 block text-sm font-medium text-slate-700">Segmento</label>
-          <select
-            className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition-colors focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
-            value={dados.segmento}
-            onChange={(e) => setDados({ ...dados, segmento: e.target.value })}
-          >
-            <option value="">Selecione o segmento</option>
-            <option value="Prestação de Serviços">Prestação de Serviços</option>
-            <option value="Comércio">Comércio</option>
-            <option value="Indústria">Indústria</option>
-            <option value="Construção Civil">Construção Civil</option>
-            <option value="Holding">Holding</option>
-          </select>
+          <label className="mb-2 block text-sm font-medium text-slate-700">
+            Segmento (selecione um ou mais)
+          </label>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {SEGMENTOS.map((segmento) => {
+              const ativo = segmentosSelecionados.includes(segmento)
+
+              return (
+                <label
+                  key={segmento}
+                  className={`flex cursor-pointer items-center justify-center rounded-lg border p-3 text-center text-xs font-medium transition-colors ${
+                    ativo
+                      ? "border-blue-600 bg-blue-50 text-blue-700"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-blue-400"
+                  }`}
+                >
+                  <input
+                    checked={ativo}
+                    className="sr-only"
+                    type="checkbox"
+                    onChange={() => toggleSegmento(segmento)}
+                  />
+                  {segmento}
+                </label>
+              )
+            })}
+          </div>
         </div>
 
         <div>
@@ -54,6 +102,27 @@ export default function DadosCliente({ dados, setDados }) {
                 setDados({ ...dados, faturamento: parseLocalizedNumber(e.target.value) })
               }
             />
+          </div>
+
+          <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <div className="mb-2 flex items-center justify-between text-xs">
+              <span className="font-medium text-slate-700">Percentual de faturamento</span>
+              <span className="font-semibold text-blue-700">{dados.porcFaturamento || 10}%</span>
+            </div>
+            <input
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-blue-600"
+              max= {PERCENTUAL_MAX}
+              min= {PERCENTUAL_MIN}
+              step="0.05"
+              type="range"
+              value={dados.porcFaturamento || 10}
+              onChange={(e) =>
+                setDados({ ...dados, porcFaturamento: Number(e.target.value || 10) })
+              }
+            />
+            <p className="mt-2 text-xs text-slate-600">
+              Acréscimo gerado: <strong>{formatCurrency(resultado?.acresFaturamento)}</strong>
+            </p>
           </div>
         </div>
 
@@ -95,6 +164,24 @@ export default function DadosCliente({ dados, setDados }) {
               onChange={(e) => setDados({ ...dados, filiais: parseLocalizedNumber(e.target.value) })}
             />
           </div>
+          <div className="mb-8 rounded-lg border border-slate-200 bg-slate-50 p-3 col-span-3">
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="font-medium text-slate-700">Percentual por filial</span>
+                <span className="font-semibold text-blue-700">{dados.porcFiliais || 10}%</span>
+              </div>
+              <input
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-blue-600"
+                max= {PORC_FILIAIS_MAX}
+                min= {PORC_FILIAIS_MIN}
+                step="5"
+                type="range"
+                value={dados.porcFiliais || 10}
+                onChange={(e) => setDados({ ...dados, porcFiliais: Number(e.target.value || 10) })}
+              />
+              <p className="mt-2 text-xs text-slate-600">
+              Acréscimo gerado: <strong>{formatCurrency(resultado?.filiaisValor)}</strong>
+              </p>
+            </div>
         </div>
       </div>
     </section>

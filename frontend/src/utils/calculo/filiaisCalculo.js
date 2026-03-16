@@ -2,11 +2,14 @@ import { arredondar } from "./helpers";
 
 /**
  * Calcula o acréscimo por filiais.
- * Cada filial adiciona 25% sobre a base.
+ * Cada filial adiciona um percentual configurável sobre a base.
  */
-export function calcularFiliais(valorBase, filiais){
+export function calcularFiliais(valorBase, filiais, porcFiliais) {
 
-    if(!filiais && filiais == 0) return 0
+  const quantidadeFiliais = Number(filiais || 0)
+  const percentual = Number(porcFiliais || 0)
 
-    return arredondar(filiais * 0.25 * valorBase)
+  if (!quantidadeFiliais && quantidadeFiliais == 0) return 0
+
+  return arredondar(quantidadeFiliais * (percentual/100) * valorBase)
 }

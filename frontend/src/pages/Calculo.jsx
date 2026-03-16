@@ -12,10 +12,12 @@ export default function Calculo() {
     salarioMinimo: "",
     percentual: 0.9,
     imposto: 0.12,
+    porcFiliais: 0.25,
+    porcFaturamento: 0.20,
     pisoPersonalizado: "",
 
     regime: "",
-    segmento: "",
+    segmento: [],
 
     faturamento: "",
     funcionarios: "",
@@ -81,7 +83,7 @@ export default function Calculo() {
             </section>
 
             <BaseCalculo dados={dados} resultado={resultado} setDados={setDados} />
-            <DadosCliente dados={dados} setDados={setDados} />
+            <DadosCliente dados={dados} resultado={resultado} setDados={setDados} />
             <Variaveis
               dados={dados}
               integracoes={integracoes}

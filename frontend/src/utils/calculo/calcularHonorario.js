@@ -15,8 +15,8 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
   const regimeValor = calcularRegime(valorBase, dados.regime)
   const segmentoValor = calcularSegmento(valorBase, dados.segmento)
   const funcionariosValor = calcularFuncionarios(dados)
-  const acresFaturamento = calcularFaturamento(dados.faturamento)
-  const filiaisValor = calcularFiliais(valorBase, dados.filiais)
+  const acresFaturamento = calcularFaturamento(dados.faturamento, dados.porcFaturamento)
+  const filiaisValor = calcularFiliais(valorBase, dados.filiais, dados.porcFiliais)
   const balanceteValor = calcularBalancete(dados.salarioMinimo, dados.balancete)
   const reuniaoValor = calcularReuniao(dados.salarioMinimo, dados.reuniao)
 
@@ -55,7 +55,7 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
     piso: piso || 0,
     filiaisValor: filiaisValor || 0,
     regime: dados.regime || "",
-    segmento: dados.segmento || "",
+    segmento: dados.segmento || [],
     balancete: dados.balancete || "",
     reuniao: dados.reuniao || "",
   }
