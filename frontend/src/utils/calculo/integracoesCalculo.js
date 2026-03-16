@@ -22,7 +22,7 @@ export function calcularIntegracoes(dados = {}, regimeValor,
     quantidade++
   }
 
-  if (integracoes.hubcont) {
+  if (integracoes.hubcount) {
     total += arredondar(100 / (1 - imposto - 0.10))
     quantidade++
   }

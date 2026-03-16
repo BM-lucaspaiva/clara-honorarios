@@ -8,7 +8,7 @@ import {
   parseLocalizedNumber,
 } from "../../utils/calculo/helpers"
 
-const PERCENTUAL_MIN = 70
+const PERCENTUAL_MIN = 50
 const PERCENTUAL_MAX = 110
 const IMPOSTO_MIN = 5
 const IMPOSTO_MAX = 20
@@ -26,20 +26,22 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
     IMPOSTO_MAX,
   )
 
+  const salarioPercentual = salarioMinimo * (percentualAtual / 100)
+
   const [percentualInput, setPercentualInput] = useState(String(percentualAtual))
   const [impostoInput, setImpostoInput] = useState(String(impostoAtual))
 
-  // Mantém o input textual em sincronia com o valor válido aplicado no cálculo.
+  // Mantem o input textual em sincronia com o valor valido aplicado no calculo.
   useEffect(() => {
     setPercentualInput(String(percentualAtual))
   }, [percentualAtual])
 
-  // Mantém o input textual de imposto em sincronia com o valor válido aplicado.
+  // Mantem o input textual de imposto em sincronia com o valor valido aplicado.
   useEffect(() => {
     setImpostoInput(String(impostoAtual))
   }, [impostoAtual])
 
-  // Valida e aplica o percentual digitado; em valor inválido, usa o mínimo permitido.
+  // Valida e aplica o percentual digitado; em valor invalido, usa o minimo permitido.
   const validarPercentual = () => {
     const parsed = parseIntegerInput(percentualInput)
     const valorFinal =
@@ -51,7 +53,7 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
     setPercentualInput(String(valorFinal))
   }
 
-  // Valida e aplica o imposto digitado; em valor inválido, usa o mínimo permitido.
+  // Valida e aplica o imposto digitado; em valor invalido, usa o minimo permitido.
   const validarImposto = () => {
     const parsed = parseIntegerInput(impostoInput)
     const valorFinal = parsed !== null && parsed >= IMPOSTO_MIN && parsed <= IMPOSTO_MAX ? parsed : IMPOSTO_MIN
@@ -60,14 +62,14 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
     setImpostoInput(String(valorFinal))
   }
 
-  // Permite confirmar pelo Enter, aplicando o valor ao cálculo e sincronizando o slider.
+  // Permite confirmar pelo Enter, aplicando o valor ao calculo e sincronizando o slider.
   const handlePercentualKeyDown = (event) => {
     if (event.key !== "Enter") return
     event.preventDefault()
     validarPercentual()
   }
 
-  // Permite confirmar imposto pelo Enter para aplicar imediatamente no cálculo.
+  // Permite confirmar imposto pelo Enter para aplicar imediatamente no calculo.
   const handleImpostoKeyDown = (event) => {
     if (event.key !== "Enter") return
     event.preventDefault()
@@ -77,11 +79,11 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-semibold text-slate-900">Base de Cálculo</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Base de Calculo</h2>
       </div>
 
       <div className="mb-6 rounded-lg bg-slate-50 p-4">
-        <label className="mb-2 block text-sm font-medium text-slate-700">Salário mínimo vigente</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700">Salario minimo vigente</label>
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
           <input
@@ -95,11 +97,14 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
             }
           />
         </div>
+        <p className="mt-2 text-xs text-slate-500">
+          Base parcial: {formatCurrency(salarioMinimo)} x {percentualAtual}% = {formatCurrency(salarioPercentual)}
+        </p>
 
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <p className="font-medium text-slate-700">Percentual do salário mínimo</p>
+              <p className="font-medium text-slate-700">Percentual do salario minimo</p>
               <span className="font-semibold text-blue-700">{percentualAtual}%</span>
             </div>
             <div className="flex items-center gap-3">
@@ -133,7 +138,7 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
               </div>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              {formatCurrency(salarioMinimo * (percentualAtual / 100))}
+              {formatCurrency(salarioMinimo)} x {percentualAtual}% = {formatCurrency(salarioPercentual)}
             </p>
           </div>
 
@@ -172,13 +177,16 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
                 </span>
               </div>
             </div>
+            <p className="mt-2 text-xs text-slate-500">
+              Valor base: {formatCurrency(salarioPercentual)} / (1 - {impostoAtual}%) = {formatCurrency(resultado?.valorBase)}
+            </p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-slate-700">Piso mínimo personalizado</label>
+          <label className="block text-sm font-medium text-slate-700">Piso minimo personalizado</label>
           <div className="relative mt-2">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
             <input
@@ -193,7 +201,7 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
             />
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Preencha apenas se quiser um piso fixo diferente da base percentual.
+            Se o piso for maior que a soma, o total final passa a ser {formatCurrency(dados.pisoPersonalizado)}.
           </p>
         </div>
       </div>

@@ -11,8 +11,8 @@ import { calcularHonorario } from "../utils/calculo/calcularHonorario"
 
 export default function Calculo() {
   const [dados, setDados] = useState({
-    salarioMinimo: "",
-    percentual: 0.9,
+    salarioMinimo: 1621,
+    percentual: 1.0,
     imposto: 0.12,
     porcFiliais: 0.25,
     porcFaturamento: 0.20,
@@ -89,6 +89,7 @@ export default function Calculo() {
             <Variaveis
               dados={dados}
               integracoes={integracoes}
+              resultado={resultado}
               setDados={setDados}
               setIntegracoes={setIntegracoes}
             />

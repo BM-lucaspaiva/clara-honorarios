@@ -3,8 +3,8 @@ import { arredondar } from "./helpers"
 // Multiplicadores por frequência para balancete e reunião.
 const freqMap = {
 
-"Semestral":0.03/5.8,
-"Trimestral":0.05/2.8,
+"Semestral":0.15/5.8,
+"Trimestral":0.15/2.8,
 "Bimestral":0.15/1.8,
 "Mensal":0.15
 
