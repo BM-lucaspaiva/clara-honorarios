@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard"
 import Historico from "./pages/Historico"
 import Login from "./pages/Login"
 import "./App.css"
+import React from "react"
 
 function App() {
   return (

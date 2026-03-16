@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
+import React from "react"
+
 import BaseCalculo from "../components/calculo/BaseCalculo"
 import DadosCliente from "../components/calculo/DadosCliente"
 import ResumoHonorario from "../components/calculo/ResumoHonorario"
