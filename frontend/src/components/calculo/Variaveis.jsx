@@ -25,11 +25,11 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-semibold text-slate-900">Variaveis / Integracoes</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Variáveis / Integrações</h2>
       </div>
 
       <p className="mb-4 text-sm text-slate-600">
-        Selecione as variaveis utilizadas pelo cliente para aplicar os ajustes no calculo.
+        Selecione as variáveis utilizadas pelo cliente para aplicar os ajustes no cálculo.
       </p>
 
       <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -95,7 +95,7 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
                   : "border-slate-300 bg-white text-transparent group-hover:border-blue-300"
               }`}
             >
-              OK
+              OK  
             </span>
             {item.label}
           </label>
@@ -103,7 +103,7 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
       </div>
 
       <p className="mt-4 text-xs text-slate-500">
-        Calculo das integracoes: soma das integracoes marcadas = {formatCurrency(resultado?.integracoesValor)}.
+        Soma das Integrações Marcadas = {formatCurrency(resultado?.integracoesValor)}.
       </p>
     </section>
   )

@@ -6,6 +6,7 @@ import { calcularIntegracoes } from "./integracoesCalculo"
 import { calcularRegime } from "./regimeCalculo"
 import { calcularSegmento } from "./segmentoCalculo"
 import { calcularBalancete, calcularReuniao } from "./variaveisCalculo"
+import { calcularSocios } from "./sociosCalculo"
 
 /**
  * Consolida todas as regras de cálculo de honorários e retorna os detalhamentos.
@@ -14,7 +15,8 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
   const valorBase = calcularBase(dados)
   const regimeValor = calcularRegime(valorBase, dados.regime)
   const segmentoValor = calcularSegmento(valorBase, dados.segmento)
-  const funcionariosValor = calcularFuncionarios(dados)
+  const sociosValor = calcularSocios(dados.socios)
+  const funcionariosValor = calcularFuncionarios(dados, sociosValor)
   const acresFaturamento = calcularFaturamento(dados.faturamento, dados.porcFaturamento)
   const filiaisValor = calcularFiliais(valorBase, dados.filiais, dados.porcFiliais)
   const balanceteValor = calcularBalancete(dados.salarioMinimo, dados.balancete)
@@ -33,6 +35,7 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
     regimeValor +
     segmentoValor +
     funcionariosValor +
+    sociosValor + 
     acresFaturamento +
     balanceteValor +
     reuniaoValor +
@@ -54,6 +57,7 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
     variaveisSelecionadas: integracoesQuantidade || 0,
     piso: piso || 0,
     filiaisValor: filiaisValor || 0,
+    sociosValor: sociosValor || 0,
     regime: dados.regime || "",
     segmento: dados.segmento || [],
     balancete: dados.balancete || "",

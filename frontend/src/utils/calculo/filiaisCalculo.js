@@ -8,8 +8,9 @@ export function calcularFiliais(valorBase, filiais, porcFiliais) {
 
   const quantidadeFiliais = Number(filiais || 0)
   const percentual = Number(porcFiliais || 0)
+  const percentualNormalizado = percentual > 1 ? percentual / 100 : percentual
 
-  if (!quantidadeFiliais && quantidadeFiliais == 0) return 0
+  if (!Number.isFinite(quantidadeFiliais) || quantidadeFiliais <= 0) return 0
 
-  return arredondar(quantidadeFiliais * (percentual/100) * valorBase)
+  return arredondar(quantidadeFiliais * percentualNormalizado * valorBase)
 }

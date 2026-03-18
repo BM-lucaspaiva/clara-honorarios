@@ -13,8 +13,25 @@ const PERCENTUAL_MAX = 110
 const IMPOSTO_MIN = 5
 const IMPOSTO_MAX = 20
 
+function TooltipInfo({ text }) {
+  return (
+    <span className="group relative inline-flex">
+      <span
+        className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 text-[10px] font-bold text-slate-500 transition-colors group-hover:border-blue-400 group-hover:text-blue-600"
+        tabIndex={0}
+      >
+        ?
+      </span>
+      <span className="pointer-events-none absolute bottom-[calc(100%+8px)] left-1/2 z-30 w-64 -translate-x-1/2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-[11px] font-normal leading-4 text-slate-600 opacity-0 shadow-lg transition-all duration-150 group-hover:opacity-100 group-focus-within:opacity-100">
+        {text}
+      </span>
+    </span>
+  )
+}
+
 export default function BaseCalculo({ dados, setDados, resultado }) {
   const salarioMinimo = Number(dados.salarioMinimo)
+  
   const percentualAtual = clamp(
     Math.round(Number(dados.percentual || 0.9) * 100),
     PERCENTUAL_MIN,
@@ -79,11 +96,11 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-semibold text-slate-900">Base de Calculo</h2>
+        <h2 className="text-xl font-semibold text-slate-900">Base de Cálculo</h2>
       </div>
 
       <div className="mb-6 rounded-lg bg-slate-50 p-4">
-        <label className="mb-2 block text-sm font-medium text-slate-700">Salario minimo vigente</label>
+        <label className="mb-2 block text-sm font-medium text-slate-700">Salário Mínimo</label>
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
           <input
@@ -97,14 +114,10 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
             }
           />
         </div>
-        <p className="mt-2 text-xs text-slate-500">
-          Base parcial: {formatCurrency(salarioMinimo)} x {percentualAtual}% = {formatCurrency(salarioPercentual)}
-        </p>
-
         <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <p className="font-medium text-slate-700">Percentual do salario minimo</p>
+              <p className="font-medium text-slate-700">Percentual do Salário Mínimo</p>
               <span className="font-semibold text-blue-700">{percentualAtual}%</span>
             </div>
             <div className="flex items-center gap-3">
@@ -138,13 +151,13 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
               </div>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              {formatCurrency(salarioMinimo)} x {percentualAtual}% = {formatCurrency(salarioPercentual)}
+              Percentual do Salário Mínimo que será utilizado.
             </p>
           </div>
 
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <p className="font-medium text-slate-700">Imposto aplicado no valor base</p>
+              <p className="font-medium text-slate-700">Imposto a ser Aplicado</p>
               <span className="font-semibold text-blue-700">{impostoAtual}%</span>
             </div>
             <div className="flex items-center gap-3">
@@ -178,7 +191,7 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
               </div>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              Valor base: {formatCurrency(salarioPercentual)} / (1 - {impostoAtual}%) = {formatCurrency(resultado?.valorBase)}
+              Imposto a ser aplicado sobre o percentual do Salário Mínimo
             </p>
           </div>
         </div>
@@ -186,7 +199,7 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-slate-700">Piso minimo personalizado</label>
+          <label className="block text-sm font-medium text-slate-700">Piso Honorários</label>
           <div className="relative mt-2">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">R$</span>
             <input
@@ -201,14 +214,18 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
             />
           </div>
           <p className="mt-2 text-xs text-slate-500">
-            Se o piso for maior que a soma, o total final passa a ser {formatCurrency(dados.pisoPersonalizado)}.
+            Valor mínimo de honorários.
           </p>
         </div>
       </div>
 
       <div className="mt-6 rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm text-slate-700">
-        Valor base calculado: <strong>{formatCurrency(resultado?.valorBase)}</strong>
+        Valor base calculado: <strong>{formatCurrency(resultado?.valorBase)}</strong>{" "}
+        <TooltipInfo
+          text={`Calculo: ${formatCurrency(salarioPercentual)} / ${percentualAtual} - ${impostoAtual}%`}
+        />
       </div>
     </section>
   )
 }
+

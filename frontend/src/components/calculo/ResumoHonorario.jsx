@@ -35,14 +35,14 @@ export default function ResumoHonorario({ dados, resultado }) {
     <div className="sticky top-24 overflow-hidden rounded-xl shadow-lg">
       <div className="bg-blue-600 p-6 text-center text-white">
         <p className="mb-2 text-sm font-medium uppercase tracking-wider text-blue-100">
-          Honorario Mensal Estimado
+          Honorário Mensal Estimado
         </p>
         <div className="text-4xl font-bold tracking-tight">{formatCurrency(resultado?.honorarioTotal)}</div>
       </div>
 
       <div className="border border-slate-200 bg-white p-6">
         <h3 className="mb-4 border-b border-slate-100 pb-2 font-semibold text-slate-900">
-          Resumo da Simulacao
+          Resumo da Simulação
         </h3>
 
         <ul className="space-y-3 text-sm">
@@ -68,16 +68,17 @@ export default function ResumoHonorario({ dados, resultado }) {
             </span>
           </li>
           <li className="flex justify-between gap-4">
-            <span className="text-slate-500">Socios:</span>
-            <span className={`text-right font-medium ${getClass(sociosTexto)}`}>{sociosTexto}</span>
+            <span className="text-slate-500">Sócios:</span>
+            <span className={`text-right font-medium ${getClass(sociosTexto)}`}>
+              {sociosTexto}
+              {temValor(sociosTexto) ? ` (${formatCurrency(resultado?.sociosValor)})` : ""}
+            </span>
           </li>
           <li className="flex justify-between gap-4">
-            <span className="text-slate-500">Funcionarios:</span>
+            <span className="text-slate-500">Funcionários:</span>
             <span className={`text-right font-medium ${getClass(funcionariosTexto)}`}>
               {funcionariosTexto}
-              {(temValor(funcionariosTexto) || temValor(sociosTexto))
-                ? ` (${formatCurrency(resultado?.funcionariosValor)})`
-                : ""}
+              {(temValor(funcionariosTexto)) ? ` (${formatCurrency(resultado?.funcionariosValor)})` : ""}
             </span>
           </li>
           <li className="flex justify-between gap-4">
@@ -102,7 +103,7 @@ export default function ResumoHonorario({ dados, resultado }) {
             </span>
           </li>
           <li className="flex justify-between gap-4 border-t border-slate-200 pt-2">
-            <span className="text-slate-500">Variaveis:</span>
+            <span className="text-slate-500">Variáveis:</span>
             <span className={`text-right font-medium ${getClass(descricaoVariaveis)}`}>
               {descricaoVariaveis}
               {temValor(descricaoVariaveis) ? ` (${formatCurrency(resultado?.integracoesValor)})` : ""}
@@ -111,7 +112,7 @@ export default function ResumoHonorario({ dados, resultado }) {
         </ul>
 
         <button className="mt-8 flex w-full items-center justify-center rounded-lg bg-blue-600 py-4 font-bold text-white transition-colors hover:bg-blue-700">
-          Gerar Relatorio de Honorarios
+          Gerar Relatório de Honorários
         </button>
       </div>
     </div>
