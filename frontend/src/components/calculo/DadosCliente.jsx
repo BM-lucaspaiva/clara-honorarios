@@ -1,4 +1,5 @@
-﻿import {
+import {
+  arredondar,
   formatCurrency,
   formatLocalizedNumber,
   parseLocalizedNumber,
@@ -32,6 +33,16 @@ const PERCENTUAL_MIN = 0.10
 const PERCENTUAL_MAX = 0.50
 const PORC_FILIAIS_MIN = 10
 const PORC_FILIAIS_MAX = 50
+const SOCIOS_VALOR_FIXO = 49
+const FUNCIONARIOS_FAIXAS = [
+  { faixa: "1 a 5", multiplicador: 1.0 },
+  { faixa: "6 a 20", multiplicador: 0.93 },
+  { faixa: "21 a 50", multiplicador: 0.85 },
+  { faixa: "51 a 100", multiplicador: 0.8 },
+  { faixa: "101 a 250", multiplicador: 0.75 },
+  { faixa: "251 a 300", multiplicador: 0.7 },
+  { faixa: "301+", multiplicador: 0.65 },
+]
 
 function normalizarPercentualFiliais(valor) {
   const percentualBruto = Number(valor || 0)
@@ -75,8 +86,10 @@ export default function DadosCliente({ dados, setDados, resultado }) {
 
   const percentualFaturamento = Number(dados.porcFaturamento || 0)
   const percentualFiliais = normalizarPercentualFiliais(dados.porcFiliais)
+  const salarioMinimo = Number(dados.salarioMinimo || 0)
   const valorBase = Number(resultado?.valorBase || 0)
   const faturamento = Number(dados.faturamento || 0)
+  const funcionarios = Number(dados.funcionarios || 0)
   const filiais = Number(dados.filiais || 0)
   const fatorSegmento =
     segmentosSelecionados.length === 2 ? 0.85 : segmentosSelecionados.length === 3 ? 0.75 : 1
@@ -106,7 +119,30 @@ export default function DadosCliente({ dados, setDados, resultado }) {
       ? `Filiais (${filiais}) x ${formatPercent(percentualFiliais, 0)} x ${formatCurrency(valorBase)}`
       : `Filiais x ${formatPercent(percentualFiliais, 0)} x ${formatCurrency(valorBase)}`
 
-  const faturamentoTooltipText = `${faturamentoCalculoText}\n${filiaisCalculoText}`
+  const faturamentoTooltipText = `${faturamentoCalculoText}`
+  const sociosTooltipText = `Cálculo: Sócios x ${formatCurrency(SOCIOS_VALOR_FIXO)}`
+
+  const faixaAtualFuncionarios =
+    FUNCIONARIOS_FAIXAS.find(({ faixa }) => {
+      if (faixa === "301+") return funcionarios > 300
+      const [inicio, fim] = faixa.split(" a ").map(Number)
+      return funcionarios >= inicio && funcionarios <= fim
+    }) || null
+
+  const valorBaseFuncionario = arredondar(salarioMinimo * 0.04)
+  const funcionariosFaixasText = FUNCIONARIOS_FAIXAS.map(({ faixa, multiplicador }) => {
+    const valorUnitario =
+      multiplicador === 1 ? valorBaseFuncionario : arredondar(valorBaseFuncionario * multiplicador)
+
+    return `${faixa} | ${formatCurrency(valorUnitario)} por funcionario`
+  }).join("\n")
+
+  const funcionariosTooltipText = `Cálculo: Funcionários x Valor por Funcionário da Faixa
+Base por Funcionário: ${formatCurrency(salarioMinimo)} x 4%
+Faixa atual: ${faixaAtualFuncionarios ? faixaAtualFuncionarios.faixa : "Funcionários"}
+
+Faixa | Valor unitario
+${funcionariosFaixasText}`
 
   const toggleSegmento = (segmento) => {
     const atualizado = segmentosSelecionados.includes(segmento)
@@ -195,7 +231,10 @@ export default function DadosCliente({ dados, setDados, resultado }) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Sócios</label>
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700">
+              <span>Sócios</span>
+              <TooltipInfo text={sociosTooltipText} />
+            </div>
             <input
               className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
               inputMode="decimal"
@@ -207,7 +246,10 @@ export default function DadosCliente({ dados, setDados, resultado }) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">Funcionários</label>
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700">
+              <span>Funcionários</span>
+              <TooltipInfo text={funcionariosTooltipText} />
+            </div>
             <input
               className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
               inputMode="decimal"
@@ -285,5 +327,3 @@ export default function DadosCliente({ dados, setDados, resultado }) {
     </section>
   )
 }
-
-
