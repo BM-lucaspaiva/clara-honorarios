@@ -31,6 +31,7 @@ function TooltipInfo({ text }) {
 
 export default function BaseCalculo({ dados, setDados, resultado }) {
   const salarioMinimo = Number(dados.salarioMinimo)
+  const consultoriaAtual = dados.consultoria === "sim" ? "sim" : "nao"
   
   const percentualAtual = clamp(
     Math.round(Number(dados.percentual || 0.9) * 100),
@@ -217,6 +218,34 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
             Valor mínimo de honorários.
           </p>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700">Consultoria</label>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {["sim", "nao"].map((opcao) => {
+              const selecionado = consultoriaAtual === opcao
+              const texto = opcao === "sim" ? "Sim" : "Não"
+
+              return (
+                <button
+                  key={opcao}
+                  className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
+                    selecionado
+                      ? "border-blue-600 bg-blue-50 text-blue-700"
+                      : "border-slate-300 bg-white text-slate-700 hover:border-blue-400"
+                  }`}
+                  type="button"
+                  onClick={() => setDados({ ...dados, consultoria: opcao })}
+                >
+                  {texto}
+                </button>
+              )
+            })}
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            Quando marcado como Sim, aplica o cálculo de consultoria.
+          </p>
+        </div>
       </div>
 
       <div className="mt-6 rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm text-slate-700">
@@ -228,4 +257,3 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
     </section>
   )
 }
-

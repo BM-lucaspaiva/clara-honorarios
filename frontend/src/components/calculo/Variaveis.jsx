@@ -185,10 +185,6 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
           )
         })}
       </div>
-
-      <p className="mt-4 text-xs text-slate-500">
-        Soma das Integrações Marcadas = {formatCurrency(resultado?.integracoesValor)}.
-      </p>
     </section>
   )
 }

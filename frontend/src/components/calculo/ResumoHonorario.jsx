@@ -1,4 +1,4 @@
-import { formatCurrency } from "../../utils/calculo/helpers"
+import { formatCurrency, parseLocalizedNumber } from "../../utils/calculo/helpers"
 
 /**
  * Retorna "---" para valores vazios e mantem o valor original quando preenchido.
@@ -30,6 +30,16 @@ export default function ResumoHonorario({ dados, resultado }) {
   const filiaisTexto = getDisplay(dados.filiais)
   const balanceteTexto = getDisplay(dados.balancete)
   const reuniaoTexto = getDisplay(dados.reuniao)
+  const observacoesAdicionais = Array.isArray(dados.observacoes)
+    ? dados.observacoes.filter((observacao) => {
+        const nomePreenchido = String(observacao?.nome || "").trim() !== ""
+        const valorPreenchido = parseLocalizedNumber(observacao?.valor) !== 0
+        return nomePreenchido || valorPreenchido
+      })
+    : []
+  const descricaoObservacoes = observacoesAdicionais.length
+    ? `${observacoesAdicionais.length} adicional(is)`
+    : "---"
 
   return (
     <div className="sticky top-24 overflow-hidden rounded-xl shadow-lg">
@@ -107,6 +117,13 @@ export default function ResumoHonorario({ dados, resultado }) {
             <span className={`text-right font-medium ${getClass(descricaoVariaveis)}`}>
               {descricaoVariaveis}
               {temValor(descricaoVariaveis) ? ` (${formatCurrency(resultado?.integracoesValor)})` : ""}
+            </span>
+          </li>
+          <li className="flex justify-between gap-4">
+            <span className="text-slate-500">Observações:</span>
+            <span className={`text-right font-medium ${getClass(descricaoObservacoes)}`}>
+              {descricaoObservacoes}
+              {temValor(descricaoObservacoes) ? ` (${formatCurrency(resultado?.observacoesValor)})` : ""}
             </span>
           </li>
         </ul>

@@ -5,6 +5,7 @@ import React from "react"
 
 import BaseCalculo from "../components/calculo/BaseCalculo"
 import DadosCliente from "../components/calculo/DadosCliente"
+import Observacoes from "../components/calculo/Observacoes"
 import ResumoHonorario from "../components/calculo/ResumoHonorario"
 import Variaveis from "../components/calculo/Variaveis"
 import { calcularHonorario } from "../utils/calculo/calcularHonorario"
@@ -28,6 +29,7 @@ export default function Calculo() {
 
     balancete: "",
     reuniao: "",
+    observacoes: [{ nome: "", valor: "" }],
   })
 
   const [integracoes, setIntegracoes] = useState({
@@ -93,6 +95,7 @@ export default function Calculo() {
               setDados={setDados}
               setIntegracoes={setIntegracoes}
             />
+            <Observacoes dados={dados} setDados={setDados} />
           </div>
 
           <div className="lg:col-span-4">

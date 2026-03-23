@@ -7,12 +7,16 @@ import { calcularRegime } from "./regimeCalculo"
 import { calcularSegmento } from "./segmentoCalculo"
 import { calcularBalancete, calcularReuniao } from "./variaveisCalculo"
 import { calcularSocios } from "./sociosCalculo"
+import { calculoConsultoria } from "./calculoConsultoria"
+import { arredondar, parseLocalizedNumber } from "./helpers"
 
 /**
  * Consolida todas as regras de cálculo de honorários e retorna os detalhamentos.
  */
 export function calcularHonorario(dados = {}, integracoes = {}) {
-  const valorBase = calcularBase(dados)
+  const preBase = calcularBase(dados)
+  const consultoria = calculoConsultoria(dados, preBase)
+  const valorBase = arredondar(preBase + consultoria) 
   const regimeValor = calcularRegime(valorBase, dados.regime)
   const segmentoValor = calcularSegmento(valorBase, dados.segmento)
   const sociosValor = calcularSocios(dados.socios)
@@ -30,6 +34,11 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
   )
 
   const piso = Number(dados.pisoPersonalizado || 0)
+  const observacoesValor = Array.isArray(dados.observacoes)
+    ? dados.observacoes.reduce((acumulado, observacao) => {
+        return acumulado + parseLocalizedNumber(observacao?.valor)
+      }, 0)
+    : 0
 
   let honorarioTotal =
     regimeValor +
@@ -43,6 +52,7 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
     filiaisValor
 
   if (piso > honorarioTotal) honorarioTotal = piso
+  honorarioTotal += observacoesValor
 
   return {
     honorarioTotal: honorarioTotal || 0,
@@ -56,6 +66,7 @@ export function calcularHonorario(dados = {}, integracoes = {}) {
     integracoesValor: integracoesValor || 0,
     variaveisSelecionadas: integracoesQuantidade || 0,
     piso: piso || 0,
+    observacoesValor: observacoesValor || 0,
     filiaisValor: filiaisValor || 0,
     sociosValor: sociosValor || 0,
     regime: dados.regime || "",
