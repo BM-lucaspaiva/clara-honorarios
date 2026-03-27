@@ -1,15 +1,13 @@
 export default function QuickTipCard() {
   return (
-    <div className="rounded-2xl bg-blue-50 p-6 shadow-sm">
-      <h3 className="flex items-center gap-2 text-2xl font-semibold text-blue-700">
-        <span>◔</span>
-        Dica Rápida
-      </h3>
+    <div className="rounded-xl border border-blue-100 bg-blue-50 p-6">
+      <p className="text-xs font-medium uppercase tracking-wider text-blue-700">
+        Dica rápida
+      </p>
 
-      <p className="mt-4 text-lg leading-8 text-blue-700">
-        Exporte seus cálculos em <strong>PDF</strong> ou <strong>planilha</strong>{" "}
-        clicando no botão de exportar dentro de cada empresa.
+      <p className="mt-3 text-sm leading-6 text-blue-900">
+        Use a busca para localizar cálculos por empresa, sócio ou empresa do orçamento.
       </p>
     </div>
-  );
+  )
 }

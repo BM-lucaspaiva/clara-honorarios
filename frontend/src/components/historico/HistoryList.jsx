@@ -1,22 +1,18 @@
-import EmptyState from "./EmptyState";
-import HistoryCard from "./HistoryCard";
-import HistorySkeleton from "./HistorySkeleton";
+import EmptyState from "./EmptyState"
+import HistoryCard from "./HistoryCard"
+import HistorySkeleton from "./HistorySkeleton"
 
-export default function HistoryList({
-  items,
-  loading,
-  onItemClick,
-}) {
+export default function HistoryList({ items, loading, onItemClick }) {
   if (loading) {
-    return <HistorySkeleton />;
+    return <HistorySkeleton />
   }
 
   if (!items.length) {
-    return <EmptyState />;
+    return <EmptyState />
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-4">
       {items.map((item) => (
         <HistoryCard
           key={item.id}
@@ -25,5 +21,5 @@ export default function HistoryList({
         />
       ))}
     </div>
-  );
+  )
 }
