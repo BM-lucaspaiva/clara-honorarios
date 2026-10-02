@@ -8,7 +8,8 @@ import PizZip from "pizzip"
 import { PRESTADORAS } from "../src/data/prestadoras.js"
 import { dadosDoRelatorio, gerarRelatorioHonorarios } from "../src/services/geradorRelatorioService.js"
 import { formatarCnpj } from "../src/utils/empresa/formatarCnpj.js"
-import { dataFuturaValida, dataLocalISO, proximaDataLocalISO, validarRelatorio } from "../src/utils/relatorio/validarRelatorio.js"
+import { calcularIntegracoes } from "../src/utils/calculo/integracoesCalculo.js"
+import { dataValida, validarRelatorio } from "../src/utils/relatorio/validarRelatorio.js"
 
 {
   const simulacao = {
@@ -17,7 +18,7 @@ import { dataFuturaValida, dataLocalISO, proximaDataLocalISO, validarRelatorio }
       prestadoraServico: PRESTADORAS[0].razaoSocial,
       nomeFantasia: "Loja Exemplo",
       cnpj: "12345678000190",
-      dataInicio: proximaDataLocalISO(),
+      dataInicio: "2020-01-01",
       atividades: "Comércio de livros",
       contatoNome: "Ana",
       contatoCelular: "(11) 99999-9999",
@@ -36,7 +37,14 @@ import { dataFuturaValida, dataLocalISO, proximaDataLocalISO, validarRelatorio }
       reuniao: "Trimestral",
       observacoes: [{ nome: "Serviço extra", valor: "25,20" }],
     },
-    integracoes: { niboDocs: true, crfBasico: true },
+    integracoes: {
+      niboDocs: true,
+      niboGF: true,
+      omieFit: true,
+      omieCliente: true,
+      sistemaProprio: true,
+      smartFin: true,
+    },
     resultado: { honorarioTotal: 1234.56, funcionariosValor: 200.25, sociosValor: 92.75 },
   }
   const valores = dadosDoRelatorio(simulacao)
@@ -51,21 +59,48 @@ import { dataFuturaValida, dataLocalISO, proximaDataLocalISO, validarRelatorio }
   assert.equal(valores.contratada_eqpm, "")
   assert.equal(valores.plano_stc, "X")
   assert.equal(valores.plano_bm, "")
-  assert.equal(valores.crf_basico, "X")
+  assert.equal(valores.crf_basico, "")
+  assert.equal(valores.crf_completo, "X")
+  for (const campo of ["sis_omiefit", "sis_omiecliente", "sis_proprio", "sis_smartfin", "sis_nibogf", "sis_ccnibo"]) {
+    assert.equal(valores[campo], "X", `Marcação ausente: ${campo}`)
+  }
+  const somenteNiboGF = dadosDoRelatorio({ ...simulacao, integracoes: { niboGF: true } })
+  assert.equal(somenteNiboGF.sis_nibogf, "X")
+  assert.equal(somenteNiboGF.sis_ccnibo, "")
+  const somenteNiboDocs = dadosDoRelatorio({ ...simulacao, integracoes: { niboDocs: true } })
+  assert.equal(somenteNiboDocs.sis_nibogf, "")
+  assert.equal(somenteNiboDocs.sis_ccnibo, "X")
+  assert.ok(!Object.hasOwn(valores, "sis_nibogt"))
+  assert.deepEqual(
+    valores.servicos_adicionais.split("\n").map((item) => item.replace(/\s+/g, " ")),
+    ["Braga Online", "Serviço extra — R$ 25,20"],
+  )
+  const comOutrosServicos = dadosDoRelatorio({
+    ...simulacao,
+    integracoes: { ...simulacao.integracoes, hubcount: true, centroCustos: true },
+  })
+  assert.ok(comOutrosServicos.servicos_adicionais.includes("Hubcount"))
+  assert.ok(comOutrosServicos.servicos_adicionais.includes("Centro de Custos"))
+  const custoFixo = calcularIntegracoes(simulacao.dados, 100, 50, {})
+  const custoComSistemasSemValor = calcularIntegracoes(simulacao.dados, 100, 50, {
+    omieFit: true, omieCliente: true, sistemaProprio: true, smartFin: true,
+  })
+  assert.equal(custoComSistemasSemValor.total, custoFixo.total)
+  assert.equal(custoComSistemasSemValor.quantidade, custoFixo.quantidade + 4)
+  assert.equal(custoFixo.quantidade, 2)
   assert.equal(valores.faturamento, "10.000,00")
   assert.equal(valores.honorario, "1.234,56")
   assert.equal(valores.data_inicio, simulacao.empresa.dataInicio.split("-").reverse().join("/"))
   assert.equal(valores.pro_labore, "293,00")
   assert.deepEqual(validarRelatorio(simulacao), { empresa: [], calculo: [] })
-  assert.equal(dataFuturaValida("2026-10-01", new Date(2026, 9, 1)), false)
-  assert.equal(dataFuturaValida("2026-10-02", new Date(2026, 9, 1)), true)
-  assert.equal(dataFuturaValida("2026-02-30", new Date(2026, 0, 1)), false)
-  assert.equal(proximaDataLocalISO(new Date(2026, 11, 31)), "2027-01-01")
+  assert.equal(dataValida("2020-01-01"), true)
+  assert.equal(dataValida("2026-10-02"), true)
+  assert.equal(dataValida("2026-02-30"), false)
   const incompleta = validarRelatorio({
-    empresa: { ...simulacao.empresa, nomeEmpresa: "", dataInicio: dataLocalISO() },
+    empresa: { ...simulacao.empresa, nomeEmpresa: "", dataInicio: "2026-02-30" },
     dados: { ...simulacao.dados, regime: "", segmento: [], funcionarios: "" },
   })
-  assert.deepEqual(incompleta.empresa, ["Nome da Empresa", "Data de Início (posterior a hoje)"])
+  assert.deepEqual(incompleta.empresa, ["Nome da Empresa", "Data de Início (data válida)"])
   assert.deepEqual(incompleta.calculo, ["Regime Tributário", "Segmento", "Funcionários"])
   for (const prestadora of PRESTADORAS) {
     const campos = dadosDoRelatorio({
@@ -83,8 +118,8 @@ import { dataFuturaValida, dataLocalISO, proximaDataLocalISO, validarRelatorio }
     (error) => error.pendencias?.empresa.includes("CNPJ da Empresa (14 dígitos)"),
   )
   await assert.rejects(
-    gerarRelatorioHonorarios({ ...simulacao, empresa: { ...simulacao.empresa, dataInicio: dataLocalISO() } }),
-    (error) => error.pendencias?.empresa.includes("Data de Início (posterior a hoje)"),
+    gerarRelatorioHonorarios({ ...simulacao, empresa: { ...simulacao.empresa, dataInicio: "2026-02-30" } }),
+    (error) => error.pendencias?.empresa.includes("Data de Início (data válida)"),
   )
 
   const modelo = path.resolve("public/templates/Modelo de Ficha de Entrada - Contabilidade.docx")

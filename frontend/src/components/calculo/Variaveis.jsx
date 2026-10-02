@@ -4,10 +4,13 @@ const INTEGRACOES = [
   { key: "niboDocs", label: "Nibo (Docs + CC)" },
   { key: "niboGF", label: "Nibo (GF Plus)" },
   { key: "hubcount", label: "Hubcount" },
-  { key: "bragaOnline", label: "Braga Online" },
+  { key: "bragaOnline", label: "Braga Online", fixo: true },
   { key: "centroCustos", label: "Centro de Custos" },
-  { key: "crfBasico", label: "CRF Basico" },
-  { key: "crfCompleto", label: "CRF Completo" },
+  { key: "crfCompleto", label: "CRF Completo", fixo: true },
+  { key: "omieFit", label: "Omie Fit", semValor: true },
+  { key: "omieCliente", label: "Omie Cliente", semValor: true },
+  { key: "sistemaProprio", label: "Sistema Próprio", semValor: true },
+  { key: "smartFin", label: "SmartFin", semValor: true },
 ]
 
 const FREQ_MAP = {
@@ -64,7 +67,6 @@ function calcularValorIntegracao(itemKey, { imposto, salarioMinimo, regimeValor,
     return divisor > 0 ? arredondar(((regimeValor + segmentoValor) * 0.1) / divisor) : 0
   }
 
-  if (itemKey === "crfBasico") return arredondar(salarioMinimo * 0.04)
   if (itemKey === "crfCompleto") return arredondar(salarioMinimo * 0.12)
 
   return 0
@@ -143,18 +145,19 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
           return (
             <label
               key={item.key}
-              className={`group relative flex min-h-24 cursor-pointer items-center justify-center rounded-xl border-2 p-4 text-center text-sm font-semibold transition-all ${
+              className={`group relative flex min-h-24 items-center justify-center rounded-xl border-2 p-4 text-center text-sm font-semibold transition-all ${item.fixo ? "cursor-default" : "cursor-pointer"} ${
                 integracoes[item.key]
                   ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-blue-400 hover:bg-slate-50"
+                  : `border-slate-200 bg-white text-slate-700 ${item.fixo ? "" : "hover:border-blue-400 hover:bg-slate-50"}`
               }`}
             >
               <input
                 checked={Boolean(integracoes[item.key])}
                 className="sr-only"
+                disabled={item.fixo}
                 type="checkbox"
                 onChange={(e) =>
-                  setIntegracoes({ ...integracoes, [item.key]: e.target.checked })
+                  setIntegracoes((atual) => ({ ...atual, [item.key]: e.target.checked }))
                 }
               />
               <span
@@ -168,7 +171,7 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
               </span>
               <span className="flex flex-col items-center gap-1">
                 <span>{item.label}</span>
-                <span className="text-[11px] font-semibold text-slate-500">{formatCurrency(valorItem)}</span>
+                {!item.semValor && <span className="text-[11px] font-semibold text-slate-500">{formatCurrency(valorItem)}</span>}
               </span>
             </label>
           )

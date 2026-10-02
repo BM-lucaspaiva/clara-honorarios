@@ -10,14 +10,10 @@ import { erroDeValidacaoRelatorio } from "../utils/relatorio/validarRelatorio.js
 const MODELO = "templates/Modelo de Ficha de Entrada - Contabilidade.docx"
 const MIME_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
-const NOMES_INTEGRACOES = {
-  niboDocs: "Nibo (Docs + CC)",
-  niboGF: "Nibo (GF Plus)",
+const NOMES_SERVICOS_ADICIONAIS = {
   hubcount: "Hubcount",
   bragaOnline: "Braga Online",
   centroCustos: "Centro de Custos",
-  crfBasico: "CRF Básico",
-  crfCompleto: "CRF Completo",
 }
 
 const texto = (valor) => String(valor ?? "").trim()
@@ -27,8 +23,9 @@ const moedaInformada = (valor) => valor === "" || valor == null ? "" : moedaSemS
 
 export function dadosDoRelatorio({ empresa, dados, integracoes, resultado }) {
   const prestadora = PRESTADORAS.find((item) => item.razaoSocial === empresa.prestadoraServico)
-  const servicosSelecionados = Object.entries(NOMES_INTEGRACOES)
-    .filter(([chave]) => integracoes[chave])
+  const integracoesAtivas = { ...integracoes, bragaOnline: true }
+  const servicosSelecionados = Object.entries(NOMES_SERVICOS_ADICIONAIS)
+    .filter(([chave]) => integracoesAtivas[chave])
     .map(([, nome]) => nome)
 
   if (dados.consultoria === "sim") servicosSelecionados.push("Consultoria")
@@ -52,17 +49,17 @@ export function dadosDoRelatorio({ empresa, dados, integracoes, resultado }) {
     contratada_stc: prestadora?.campoContratada === "contratada_stc" ? "X" : "",
     plano_bm: prestadora?.plano === "plano_bm" ? "X" : "",
     plano_stc: prestadora?.plano === "plano_stc" ? "X" : "",
-    sis_omiefit: "",
-    sis_omiecliente: "",
-    sis_proprio: "",
-    sis_smartfin: "",
-    sis_nibogt: "",
-    sis_ccnibo: "",
+    sis_omiefit: integracoes.omieFit ? "X" : "",
+    sis_omiecliente: integracoes.omieCliente ? "X" : "",
+    sis_proprio: integracoes.sistemaProprio ? "X" : "",
+    sis_smartfin: integracoes.smartFin ? "X" : "",
+    sis_nibogf: integracoes.niboGF ? "X" : "",
+    sis_ccnibo: integracoes.niboDocs ? "X" : "",
     sis_proprio_planil: "",
     sis_sem_movi: "",
     tributacao: texto(dados.regime),
-    crf_basico: integracoes.crfBasico ? "X" : "",
-    crf_completo: integracoes.crfCompleto ? "X" : "",
+    crf_basico: "",
+    crf_completo: "X",
     crf_movim: "",
     faturamento: moedaInformada(dados.faturamento),
     pro_labore: moedaSemSimbolo(Number(resultado.funcionariosValor || 0) + Number(resultado.sociosValor || 0)),

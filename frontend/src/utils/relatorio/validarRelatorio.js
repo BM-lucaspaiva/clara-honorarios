@@ -6,27 +6,15 @@ const numeroValido = (valor, minimo = 0, inteiro = false) =>
   preenchido(valor) && Number.isFinite(Number(valor)) && Number(valor) >= minimo &&
   (!inteiro || Number.isInteger(Number(valor)))
 
-export function dataLocalISO(data = new Date()) {
-  const ano = data.getFullYear()
-  const mes = String(data.getMonth() + 1).padStart(2, "0")
-  const dia = String(data.getDate()).padStart(2, "0")
-  return `${ano}-${mes}-${dia}`
-}
-
-export function proximaDataLocalISO(data = new Date()) {
-  const amanha = new Date(data.getFullYear(), data.getMonth(), data.getDate() + 1)
-  return dataLocalISO(amanha)
-}
-
-export function dataFuturaValida(valor, hoje = new Date()) {
+export function dataValida(valor) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(valor ?? "")) return false
   const [ano, mes, dia] = valor.split("-").map(Number)
   const data = new Date(ano, mes - 1, dia)
   return data.getFullYear() === ano && data.getMonth() + 1 === mes &&
-    data.getDate() === dia && valor > dataLocalISO(hoje)
+    data.getDate() === dia
 }
 
-export function validarRelatorio({ empresa = {}, dados = {} }, hoje = new Date()) {
+export function validarRelatorio({ empresa = {}, dados = {} }) {
   const pendencias = { empresa: [], calculo: [] }
   const exigirTexto = (objeto, campo, nome, grupo) => {
     if (!preenchido(objeto[campo])) pendencias[grupo].push(nome)
@@ -38,7 +26,7 @@ export function validarRelatorio({ empresa = {}, dados = {} }, hoje = new Date()
   exigirTexto(empresa, "nomeEmpresa", "Nome da Empresa", "empresa")
   exigirTexto(empresa, "nomeFantasia", "Nome Fantasia", "empresa")
   if (digitosDoCnpj(empresa.cnpj).length !== 14) pendencias.empresa.push("CNPJ da Empresa (14 dígitos)")
-  if (!dataFuturaValida(empresa.dataInicio, hoje)) pendencias.empresa.push("Data de Início (posterior a hoje)")
+  if (!dataValida(empresa.dataInicio)) pendencias.empresa.push("Data de Início (data válida)")
   exigirTexto(empresa, "atividades", "Atividades da Empresa", "empresa")
   exigirTexto(empresa, "contatoNome", "Nome do contato", "empresa")
   exigirTexto(empresa, "contatoCelular", "Celular do contato", "empresa")
@@ -59,8 +47,8 @@ export function validarRelatorio({ empresa = {}, dados = {} }, hoje = new Date()
   return pendencias
 }
 
-export function erroDeValidacaoRelatorio(simulacao, hoje = new Date()) {
-  const pendencias = validarRelatorio(simulacao, hoje)
+export function erroDeValidacaoRelatorio(simulacao) {
+  const pendencias = validarRelatorio(simulacao)
   if (!pendencias.empresa.length && !pendencias.calculo.length) return null
   const erro = new Error("Preencha ou corrija os campos indicados antes de gerar o relatório.")
   erro.pendencias = pendencias

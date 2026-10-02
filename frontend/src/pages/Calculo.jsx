@@ -52,10 +52,13 @@ export default function Calculo() {
     niboDocs: false,
     niboGF: false,
     hubcont: false,
-    bragaOnline: false,
+    bragaOnline: true,
     centroCustos: false,
-    crfBasico: false,
-    crfCompleto: false,
+    crfCompleto: true,
+    omieFit: false,
+    omieCliente: false,
+    sistemaProprio: false,
+    smartFin: false,
   })
 
   const resultado = calcularHonorario(dados, integracoes)

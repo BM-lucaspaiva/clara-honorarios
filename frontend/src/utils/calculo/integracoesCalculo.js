@@ -1,5 +1,6 @@
 /**
- * Soma os custos das integrações selecionadas e retorna também a quantidade.
+ * Soma os custos das integrações, incluindo Braga Online e CRF Completo,
+ * e conta também os sistemas sem cobrança selecionados.
  */
 export function calcularIntegracoes(dados = {}, regimeValor, 
   segmentoValor, integracoes = {}) {
@@ -27,10 +28,8 @@ export function calcularIntegracoes(dados = {}, regimeValor,
     quantidade++
   }
 
-  if (integracoes.bragaOnline) {
-    total += arredondar(15 / (1 - imposto - 0.15))
-    quantidade++
-  }
+  total += arredondar(15 / (1 - imposto - 0.15))
+  quantidade++
 
   if (integracoes.centroCustos) {
     const valor = ((regimeValor + segmentoValor) * 0.10) / (1 - imposto)
@@ -38,14 +37,11 @@ export function calcularIntegracoes(dados = {}, regimeValor,
     quantidade++
   }
 
-  if (integracoes.crfBasico) {
-    total += arredondar(salarioMinimo * 0.04)
-    quantidade++
-  }
+  total += arredondar(salarioMinimo * 0.12)
+  quantidade++
 
-  if (integracoes.crfCompleto) {
-    total += arredondar(salarioMinimo * 0.12)
-    quantidade++
+  for (const chave of ["omieFit", "omieCliente", "sistemaProprio", "smartFin"]) {
+    if (integracoes[chave]) quantidade++
   }
 
   return {

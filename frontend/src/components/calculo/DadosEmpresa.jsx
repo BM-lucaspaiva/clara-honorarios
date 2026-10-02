@@ -1,6 +1,5 @@
 import { PRESTADORAS } from "../../data/prestadoras"
 import { formatarCnpj } from "../../utils/empresa/formatarCnpj"
-import { proximaDataLocalISO } from "../../utils/relatorio/validarRelatorio"
 
 const inputClass =
   "w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
@@ -83,7 +82,6 @@ export default function DadosEmpresa({ empresa, setEmpresa }) {
             <input
               className={inputClass}
               id="data-inicio"
-              min={proximaDataLocalISO()}
               type="date"
               value={empresa.dataInicio}
               onChange={atualizarCampo("dataInicio")}
