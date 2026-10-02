@@ -248,6 +248,35 @@ export default function BaseCalculo({ dados, setDados, resultado }) {
         </div>
       </div>
 
+      <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <div className="mb-2 flex items-center justify-between text-sm">
+          <label className="font-medium text-slate-700" htmlFor="percentual-lucro">
+            Lucro da Empresa
+          </label>
+          <span className="font-semibold text-blue-700">{Number(dados.percLucro ?? 0.25) * 100}%</span>
+        </div>
+        <input
+          className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-blue-600"
+          id="percentual-lucro"
+          max="100"
+          min="0"
+          step="25"
+          type="range"
+          value={Number(dados.percLucro ?? 0.25) * 100}
+          onChange={(e) => setDados({ ...dados, percLucro: Number(e.target.value) / 100 })}
+        />
+        <div className="mt-1 flex justify-between text-xs text-slate-500">
+          <span>0%</span>
+          <span>25%</span>
+          <span>50%</span>
+          <span>75%</span>
+          <span>100%</span>
+        </div>
+        <p className="mt-2 text-xs text-slate-500">
+          Percentual acrescentado sobre a soma dos itens do honorário.
+        </p>
+      </div>
+
       <div className="mt-6 rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm text-slate-700">
         Valor base calculado: <strong>{formatCurrency(resultado?.valorBase)}</strong>{" "}
         <TooltipInfo

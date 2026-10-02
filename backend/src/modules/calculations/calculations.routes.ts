@@ -1,8 +1,10 @@
 import { Router } from "express"
-import { calculate } from "./calculations.controller"
+import * as controller from "./calculations.controller"
 
 const router = Router()
 
-router.post("/", calculate)
+router.post("/", controller.create)
+router.get("/", controller.list)
+router.get("/:id", controller.getById)
 
 export default router

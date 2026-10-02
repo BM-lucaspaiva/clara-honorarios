@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 import { formatCurrency, parseLocalizedNumber } from "../../utils/calculo/helpers"
 
 /**
@@ -15,7 +17,28 @@ const getDisplay = (value) => {
 const getClass = (value) => (value === "---" ? "text-slate-400" : "text-slate-900")
 const temValor = (value) => value !== "---"
 
-export default function ResumoHonorario({ dados, resultado }) {
+export default function ResumoHonorario({ empresa, dados, integracoes, resultado }) {
+  const [gerando, setGerando] = useState(false)
+  const [mensagemRelatorio, setMensagemRelatorio] = useState("")
+  const [pendencias, setPendencias] = useState(null)
+
+  const baixarRelatorio = async () => {
+    setGerando(true)
+    setMensagemRelatorio("")
+    setPendencias(null)
+    try {
+      const { gerarRelatorioHonorarios } = await import("../../services/geradorRelatorioService")
+      await gerarRelatorioHonorarios({ empresa, dados, integracoes, resultado })
+      setMensagemRelatorio("Download do relatório iniciado.")
+    } catch (error) {
+      console.error("Erro ao gerar relatório de honorários:", error)
+      setMensagemRelatorio(error.message || "Não foi possível gerar o relatório. Tente novamente.")
+      setPendencias(error.pendencias || null)
+    } finally {
+      setGerando(false)
+    }
+  }
+
   const descricaoVariaveis = resultado?.variaveisSelecionadas
     ? `${resultado.variaveisSelecionadas} selecionada(s)`
     : "---"
@@ -120,6 +143,12 @@ export default function ResumoHonorario({ dados, resultado }) {
             </span>
           </li>
           <li className="flex justify-between gap-4">
+            <span className="text-slate-500">Lucro ({Number(resultado?.percLucro ?? 0.25) * 100}%):</span>
+            <span className="text-right font-medium text-slate-900">
+              {formatCurrency(resultado?.lucroValor)}
+            </span>
+          </li>
+          <li className="flex justify-between gap-4">
             <span className="text-slate-500">Observações:</span>
             <span className={`text-right font-medium ${getClass(descricaoObservacoes)}`}>
               {descricaoObservacoes}
@@ -128,9 +157,27 @@ export default function ResumoHonorario({ dados, resultado }) {
           </li>
         </ul>
 
-        <button className="mt-8 flex w-full items-center justify-center rounded-lg bg-blue-600 py-4 font-bold text-white transition-colors hover:bg-blue-700">
-          Gerar Relatório de Honorários
+        <button
+          className="mt-8 flex w-full items-center justify-center rounded-lg bg-blue-600 py-4 font-bold text-white transition-colors hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
+          disabled={gerando}
+          type="button"
+          onClick={baixarRelatorio}
+        >
+          {gerando ? "Gerando relatório..." : "Gerar Relatório de Honorários"}
         </button>
+        {mensagemRelatorio && (
+          <div aria-live="polite" className={`mt-3 text-sm ${pendencias ? "text-red-700" : "text-slate-600"}`}>
+            <p>{mensagemRelatorio}</p>
+            {pendencias && Object.entries(pendencias).map(([grupo, campos]) => campos.length > 0 && (
+              <div key={grupo} className="mt-2">
+                <p className="font-semibold">{grupo === "empresa" ? "Empresa" : "Cálculo"}</p>
+                <ul className="ml-5 list-disc">
+                  {campos.map((campo) => <li key={campo}>{campo}</li>)}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

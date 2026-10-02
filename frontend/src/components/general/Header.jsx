@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white px-6 py-4">
         <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between">
-            <Link className="flex items-center gap-3" to="/dashboard">
+            <Link className="flex items-center gap-3" to="/">
                 <div className="size-6 text-blue-600">
                     <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -19,6 +19,9 @@ export default function Header() {
             </Link>
 
             <nav className="flex items-center gap-6 text-sm font-medium">
+                <Link className="text-slate-600 transition-colors hover:text-slate-900" to="/">
+                    Cálculo
+                </Link>
                 <Link className="text-blue-600" to="/dashboard">
                     Dashboard
                 </Link>

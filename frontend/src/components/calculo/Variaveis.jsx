@@ -81,17 +81,6 @@ export default function Variaveis({ dados, setDados, integracoes, setIntegracoes
   const balanceteTooltipText = `Calculo: ${formatCurrency(salarioMinimo)} x ${fatorBalancete.toFixed(4)} = ${formatCurrency(resultado?.balanceteValor)}`
   const reuniaoTooltipText = `Calculo: ${formatCurrency(salarioMinimo)} x ${fatorReuniao.toFixed(4)} = ${formatCurrency(resultado?.reuniaoValor)}`
 
-  const tabelaValoresTooltipText = INTEGRACOES.map((item) => {
-    const valorItem = calcularValorIntegracao(item.key, {
-      imposto,
-      salarioMinimo,
-      regimeValor,
-      segmentoValor,
-    })
-
-    return `${item.label}: ${formatCurrency(valorItem)}`
-  }).join("\n")
-
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 border-b border-slate-200 pb-4">

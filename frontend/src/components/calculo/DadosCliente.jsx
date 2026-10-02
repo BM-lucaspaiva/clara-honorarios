@@ -91,9 +91,6 @@ export default function DadosCliente({ dados, setDados, resultado }) {
   const faturamento = Number(dados.faturamento || 0)
   const funcionarios = Number(dados.funcionarios || 0)
   const filiais = Number(dados.filiais || 0)
-  const fatorSegmento =
-    segmentosSelecionados.length === 2 ? 0.85 : segmentosSelecionados.length === 3 ? 0.75 : 1
-
   const regimePercentual = REGIME_PERCENTUAL_MAP[dados.regime] || 0
   const regimeTooltipText =
     valorBase > 0 && regimePercentual > 0
@@ -103,7 +100,6 @@ export default function DadosCliente({ dados, setDados, resultado }) {
   const somaPercentuaisSegmento = segmentosSelecionados.reduce((acumulado, item) => {
     return acumulado + (SEGMENTO_PERCENTUAL_MAP[item] || 0)
   }, 0)
-  const segmentoBruto = valorBase * somaPercentuaisSegmento
   const segmentoTooltipText =
     valorBase > 0 && segmentosSelecionados.length > 0
       ? `Cálculo: ${formatCurrency(valorBase)} x Segmento (${formatPercent(somaPercentuaisSegmento * 100, 0)})`
@@ -224,7 +220,7 @@ ${funcionariosFaixasText}`
                 type="text"
                 value={formatLocalizedNumber(dados.faturamento)}
                 onChange={(e) =>
-                  setDados({ ...dados, faturamento: parseLocalizedNumber(e.target.value) })
+                  setDados({ ...dados, faturamento: e.target.value === "" ? "" : parseLocalizedNumber(e.target.value) })
                 }
               />
             </div>
@@ -241,7 +237,7 @@ ${funcionariosFaixasText}`
               placeholder="Ex. 1"
               type="text"
               value={formatLocalizedNumber(dados.socios)}
-              onChange={(e) => setDados({ ...dados, socios: parseLocalizedNumber(e.target.value) })}
+              onChange={(e) => setDados({ ...dados, socios: e.target.value === "" ? "" : parseLocalizedNumber(e.target.value) })}
             />
           </div>
 
@@ -257,7 +253,7 @@ ${funcionariosFaixasText}`
               type="text"
               value={formatLocalizedNumber(dados.funcionarios)}
               onChange={(e) =>
-                setDados({ ...dados, funcionarios: parseLocalizedNumber(e.target.value) })
+                setDados({ ...dados, funcionarios: e.target.value === "" ? "" : parseLocalizedNumber(e.target.value) })
               }
             />
           </div>
@@ -273,7 +269,7 @@ ${funcionariosFaixasText}`
               placeholder="Ex. 1"
               type="text"
               value={formatLocalizedNumber(dados.filiais)}
-              onChange={(e) => setDados({ ...dados, filiais: parseLocalizedNumber(e.target.value) })}
+              onChange={(e) => setDados({ ...dados, filiais: e.target.value === "" ? "" : parseLocalizedNumber(e.target.value) })}
             />
           </div>
         </div>

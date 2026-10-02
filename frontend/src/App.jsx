@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 
 import Calculo from "./pages/Calculo"
 import Dashboard from "./pages/Dashboard"
@@ -14,8 +14,8 @@ function App() {
         <Route element={<Login />} path="/login" />
         <Route element={<Dashboard />} path="/dashboard" />
         <Route element={<Historico />} path="/historico" />
-        <Route element={<Calculo />} path="/calculo" />
         <Route element={<Calculo />} path="/" />
+        <Route element={<Navigate replace to="/" />} path="/calculo" />
       </Routes>
     </BrowserRouter>
   )
